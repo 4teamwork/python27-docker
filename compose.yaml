@@ -1,0 +1,6 @@
+services:
+  python27:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 4teamwork/python:2.7

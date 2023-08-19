@@ -1,0 +1,13 @@
+Allow 64-bit arguments to ioctl()
+
+--- a/Modules/fcntlmodule.c
++++ b/Modules/fcntlmodule.c
+@@ -119,7 +119,7 @@
+     int mutate_arg = 1;
+     char buf[IOCTL_BUFSZ+1];  /* argument plus NUL byte */
+ 
+-    if (PyArg_ParseTuple(args, "O&Iw#|i:ioctl",
++    if (PyArg_ParseTuple(args, "O&Iw#|n:ioctl",
+                          conv_descriptor, &fd, &code,
+                          &str, &len, &mutate_arg)) {
+         char *arg;
