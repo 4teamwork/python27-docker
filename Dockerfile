@@ -45,6 +45,8 @@ RUN mkdir /usr/local/src \
  && patch -p 1 -i /root/patches/cve-2015-20107.patch \
  && patch -p 1 -i /root/patches/cve-2022-45061.patch \
  && patch -p 1 -i /root/patches/cve-2023-24329.patch \
+ && patch -p 1 -i /root/patches/cve-2022-48565.patch \
+ && patch -p 1 -i /root/patches/cve-2022-48560.patch \
  && ./configure \
     --enable-shared \
     --with-system-expat \
