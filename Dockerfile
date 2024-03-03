@@ -1,6 +1,6 @@
 FROM alpine:3.18 as builder
 
-RUN apk add \
+RUN apk -U upgrade && apk add \
     bzip2-dev \
     curl \
     dpkg-dev dpkg \
