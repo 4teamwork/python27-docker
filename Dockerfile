@@ -1,6 +1,40 @@
-FROM alpine:3.18 as builder
+FROM alpine:3.20 as alpine-upgrader
+RUN apk upgrade --no-cache
 
-RUN apk -U upgrade && apk add \
+FROM scratch as alpine-upgraded
+COPY --from=alpine-upgrader / /
+CMD ["/bin/sh"]
+
+
+FROM alpine-upgraded as pkg-builder
+
+RUN apk -U add \
+    sudo \
+    alpine-sdk \
+    apkbuild-pypi
+
+RUN mkdir -p /var/cache/distfiles && \
+    adduser -D packager && \
+    addgroup packager abuild && \
+    chgrp abuild /var/cache/distfiles && \
+    chmod g+w /var/cache/distfiles && \
+    echo "packager ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+WORKDIR /work
+USER packager
+
+RUN abuild-keygen -a -i -n
+
+COPY --chown=packager:packager packages/ ./
+
+RUN cd openssl1.1-compat && \
+    abuild -r
+
+FROM alpine-upgraded as builder
+
+RUN --mount=from=pkg-builder,source=/home/packager/packages/work,target=/packages \
+    --mount=from=pkg-builder,source=/etc/apk/keys,target=/etc/apk/keys \
+    apk --no-cache --repository /packages add \
     bzip2-dev \
     curl \
     dpkg-dev dpkg \
@@ -54,6 +88,8 @@ RUN mkdir /usr/local/src \
     --with-system-expat \
     --with-system-ffi \
     --enable-optimizations \
+    CPPFLAGS="-I/usr/include/openssl1.1" \
+    LDFLAGS="-L/usr/lib/openssl1.1" \
  && make \
 # set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
 # https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
@@ -113,14 +149,16 @@ RUN curl -OL -s https://raw.githubusercontent.com/pypa/get-pip/20.3.4/get-pip.py
  && rm -f get-pip.py
 
 
-FROM alpine:3.18
+FROM alpine-upgraded
 
 COPY --from=builder /usr/local /usr/local
 
-RUN find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
+RUN --mount=from=pkg-builder,source=/home/packager/packages/work,target=/packages \
+    --mount=from=pkg-builder,source=/etc/apk/keys,target=/etc/apk/keys \
+    find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
     | tr ',' '\n' \
     | sort -u \
     | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-    | xargs -rt apk add
+    | xargs -rt apk --no-cache --repository /packages add
 
 CMD ["python2.7"]
