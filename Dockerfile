@@ -148,6 +148,9 @@ RUN curl -OL -s https://raw.githubusercontent.com/pypa/get-pip/20.3.4/get-pip.py
  && python get-pip.py --disable-pip-version-check --no-cache-dir --no-compile "pip==$PYTHON_PIP_VERSION" "setuptools==$PYTHON_SETUPTOOLS_VERSION" \
  && rm -f get-pip.py
 
+RUN cd /usr/local/lib/python2.7/site-packages \
+ && patch -p 1 -i /root/patches/cve-2024-6345.patch
+
 
 FROM alpine-upgraded
 
