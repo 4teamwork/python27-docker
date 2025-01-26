@@ -1,12 +1,12 @@
-FROM alpine:3.20 as alpine-upgrader
+FROM alpine:3.20 AS alpine-upgrader
 RUN apk upgrade --no-cache
 
-FROM scratch as alpine-upgraded
+FROM scratch AS alpine-upgraded
 COPY --from=alpine-upgrader / /
 CMD ["/bin/sh"]
 
 
-FROM alpine-upgraded as pkg-builder
+FROM alpine-upgraded AS pkg-builder
 
 RUN apk -U add \
     sudo \
@@ -30,7 +30,7 @@ COPY --chown=packager:packager packages/ ./
 RUN cd openssl1.1-compat && \
     abuild -r
 
-FROM alpine-upgraded as builder
+FROM alpine-upgraded AS builder
 
 RUN --mount=from=pkg-builder,source=/home/packager/packages/work,target=/packages \
     --mount=from=pkg-builder,source=/etc/apk/keys,target=/etc/apk/keys \
