@@ -18,6 +18,7 @@ subpackages="$pkgname-dbg $pkgname-libs-static:_static $pkgname-dev:_dev
 source="https://www.openssl.org/source/openssl-$pkgver.tar.gz
 	man-section.patch
 	ppc64.patch
+	cve-2023-5678.patch
 	"
 builddir="$srcdir/openssl-$pkgver"
 pcprefix="openssl$_abiver:pc:"
@@ -142,4 +143,5 @@ sha512sums="
 b4c625fe56a4e690b57b6a011a225ad0cb3af54bd8fb67af77b5eceac55cc7191291d96a660c5b568a08a2fbf62b4612818e7cca1bb95b2b6b4fc649b0552b6d  openssl-1.1.1w.tar.gz
 43c3255118db6f5f340dc865c0f25ccbcafe5bf7507585244ca59b4d27daf533d6c3171aa32a8685cbb6200104bec535894b633de13feaadff87ab86739a445a  man-section.patch
 e040f23770d52b988578f7ff84d77563340f37c026db7643db8e4ef18e795e27d10cb42cb8656da4d9c57a28283a2828729d70f940edc950c3422a54fea55509  ppc64.patch
+41b7269ee8cd24fa6c28cea33177af857428a96e9d073ea359a7f7ce4c848c47fc18fd263593b5b113dfe2bf814822800c3bc82c32960e082388b399413ca98d  cve-2023-5678.patch
 "
