@@ -84,6 +84,7 @@ RUN mkdir /usr/local/src \
  && patch -p 1 -i /root/patches/cve-2023-40217.patch \
  && patch -p 1 -i /root/patches/cve-2023-27043.patch \
  && patch -p 1 -i /root/patches/cve-2024-6232.patch \
+ && patch -p 1 -i /root/patches/cve-2024-6923.patch \
  && ./configure \
     --enable-shared \
     --with-system-expat \
