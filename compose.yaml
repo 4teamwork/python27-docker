@@ -3,4 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ALPINE_VERSION: ${ALPINE_VERSION:-3.22}
     image: 4teamwork/python:2.7

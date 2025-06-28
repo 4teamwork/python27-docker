@@ -1,4 +1,5 @@
-FROM alpine:3.20 AS alpine-upgrader
+ARG ALPINE_VERSION=3.22
+FROM alpine:${ALPINE_VERSION} AS alpine-upgrader
 RUN apk upgrade --no-cache
 
 FROM scratch AS alpine-upgraded
